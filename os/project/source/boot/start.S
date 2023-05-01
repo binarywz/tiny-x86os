@@ -4,6 +4,7 @@
 .code16
 .text
 .global _start
+.extern boot_entry
 
 _start:
 	// 重置数据段寄存器
@@ -33,6 +34,8 @@ read_loader:
 	mov $0x0080, %dx // dh: 磁头号，dl驱动器号0x80(磁盘1)
 	int $0x13
 	jc read_loader   // 判断读取是否成功，jc判断CF寄存器是否为1，若为1则跳转到read_loader标号
+
+	jmp boot_entry   // 跳转到C语言
 
 	jmp .
 	

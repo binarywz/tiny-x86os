@@ -1,4 +1,3 @@
-
 project(boot LANGUAGES C)
 
 # 使用自定义的链接器
