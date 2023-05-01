@@ -17,6 +17,12 @@ _start:
 	// 根据https://wiki.osdev.org/Memory_Map_(x86)
 	// 使用0x7c00之前的空间作栈，大约有30KB的RAM，足够boot和loader使用
 	mov $_start, %esp
+
+	// 显示boot加载完成提示
+	mov $0xe, %ah
+	mov $'L', %al
+	int $0x10
+	
 	jmp .
 	
 	// 引导结束段
