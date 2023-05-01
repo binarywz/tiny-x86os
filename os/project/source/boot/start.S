@@ -22,7 +22,18 @@ _start:
 	mov $0xe, %ah
 	mov $'L', %al
 	int $0x10
-	
+
+	// 加载loader，只支持磁盘1
+	// https://wiki.osdev.org/Disk_access_using_the_BIOS_(INT_13h)
+read_loader:
+	mov $0x8000, %bx // 读取到的内存地址
+	mov $0x2, %cx		 // ch:磁道号，cl起始扇区号
+	mov $0x2, %ah		 // ah: 0x2读磁盘命令
+	mov $64, %al		 // al: 读取的扇区数量, 必须小于128，暂设置成32KB
+	mov $0x0080, %dx // dh: 磁头号，dl驱动器号0x80(磁盘1)
+	int $0x13
+	jc read_loader   // 判断读取是否成功，jc判断CF寄存器是否为1，若为1则跳转到read_loader标号
+
 	jmp .
 	
 	// 引导结束段
