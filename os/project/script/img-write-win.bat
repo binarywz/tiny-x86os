@@ -12,11 +12,14 @@ if not exist "disk2.vhd" (
 
 set DISK1_NAME=disk1.vhd
 
+@REM 写boot区，定位到磁盘开头，写1个块: 512字节
 dd if=boot.bin of=%DISK1_NAME% bs=512 conv=notrunc count=1
 
+@REM 写loader区，定位到磁盘第2个块，写1个块: 512字节
 dd if=loader.bin of=%DISK1_NAME% bs=512 conv=notrunc seek=1
 
-@REM dd if=kernel.elf of=%DISK1_NAME% bs=512 conv=notrunc seek=100
+@REM 写kernel区，定位到磁盘第100个块
+dd if=kernel.elf of=%DISK1_NAME% bs=512 conv=notrunc seek=100
 
 @REM dd if=init.elf of=%DISK1_NAME% bs=512 conv=notrunc seek=5000
 @REM dd if=shell.elf of=%DISK1_NAME% bs=512 conv=notrunc seek=5000

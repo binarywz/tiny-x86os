@@ -41,8 +41,9 @@ static void read_disk(int sector, int sector_count, uint8_t * buf) {
 void load_kernel(void) {
 		/*
 		* 读取的扇区数一定要大一些，保不准kernel.elf大小会变得很大
-		* 内核放在第100个扇区，
+		* 内核放在第100号扇区，读取500个扇区，256kb
 		*/
 		read_disk(100, 500, (uint8_t *)SYS_KERNEL_LOAD_ADDR);
+		((void (*)(void))SYS_KERNEL_LOAD_ADDR)();
 		for (;;) {}
 }
