@@ -7,10 +7,22 @@
 
 #include "types.h"
 
+/**
+ * 读取1个字节
+ */ 
 static inline uint8_t inb(uint16_t  port) {
 	uint8_t rv;
 	// inb al, dx
 	__asm__ __volatile__("inb %[p], %[v]" : [v]"=a" (rv) : [p]"d"(port));
+	return rv;
+}
+
+/**
+ * 读取2个字节
+ */ 
+static inline uint16_t inw(uint16_t  port) {
+	uint16_t rv;
+	__asm__ __volatile__("in %1, %0" : "=a" (rv) : "dN" (port));
 	return rv;
 }
 
