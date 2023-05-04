@@ -44,6 +44,6 @@ void load_kernel(void) {
 		* 内核放在第100号扇区，读取500个扇区，256kb
 		*/
 		read_disk(100, 500, (uint8_t *)SYS_KERNEL_LOAD_ADDR);
-		((void (*)(void))SYS_KERNEL_LOAD_ADDR)();
+		((void (*)(boot_info_t*))SYS_KERNEL_LOAD_ADDR)(&boot_info);
 		for (;;) {}
 }

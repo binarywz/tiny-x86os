@@ -3,10 +3,11 @@
  */
 #include "common/boot_info.h"
 
+
 /**
  * 内核入口
- * TODO 汇编调用C函数如何传参
+ * 汇编调用C函数如何传参: 通过栈传递参数
  */
-void kernel_init() {
+void kernel_init(boot_info_t* boot_info) {
     for (;;) {}
 }

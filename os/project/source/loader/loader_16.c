@@ -8,7 +8,7 @@ __asm__(".code16gcc");
 
 #include "loader.h"
 
-static boot_info_t boot_info;			// 启动参数信息
+boot_info_t boot_info; // 启动参数信息
 
 /**
  * BIOS下显示字符 
