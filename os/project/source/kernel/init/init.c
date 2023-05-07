@@ -9,6 +9,11 @@
  * 汇编调用C函数如何传参: 通过栈传递参数
  */
 void kernel_init(boot_info_t* boot_info) {
+    // 初始化完成后重新加载GDT
     cpu_init();
-    for(;;) {}
+}
+
+
+void init_main(void) {
+    for (;;) {}
 }
