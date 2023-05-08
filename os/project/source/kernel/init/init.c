@@ -1,8 +1,10 @@
 ﻿/**
  * 内核初始化以及测试代码
  */
+#include "init.h"
 #include "common/boot_info.h"
 #include "cpu/cpu.h"
+#include "cpu/irq.h"
 
 /**
  * 内核入口
@@ -11,6 +13,8 @@
 void kernel_init(boot_info_t* boot_info) {
     // 初始化完成后重新加载GDT
     cpu_init();
+    // 初始化IDT
+    irq_init();
 }
 
 
