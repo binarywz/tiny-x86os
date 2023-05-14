@@ -19,5 +19,7 @@ void kernel_init(boot_info_t* boot_info) {
 
 
 void init_main(void) {
+    // 调试使用
+    int a = 3 / 0;
     for (;;) {}
 }
