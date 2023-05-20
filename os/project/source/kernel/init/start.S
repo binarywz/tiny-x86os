@@ -51,7 +51,9 @@ exception_handler_unknown:
 	push %gs
 
 	# 调用中断处理函数
+	push %esp 				# 压入异常信息结构体
 	call do_handler_unknown
+	add $(1*4), %esp 		# 丢弃esp
 
 	# 恢复保存的寄存器
 	pop %gs

@@ -10,12 +10,12 @@
 
 static gate_desc_t idt_table[IDT_TABLE_NR];	// 中断描述表
 
-static void do_default_handler(const char* message) {
+static void do_default_handler(exception_frame_t* frame, const char* message) {
     for (;;) {}
 }
 
-void do_handler_unknown() {
-	do_default_handler("Unknown exception.");
+void do_handler_unknown(exception_frame_t* frame) {
+	do_default_handler(frame, "Unknown exception.");
 }
 
 void irq_init(void) {	
