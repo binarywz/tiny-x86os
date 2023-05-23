@@ -84,4 +84,9 @@ void exception_handler_machine_check(void);
 void exception_handler_smd_exception(void);
 void exception_handler_virtual_exception(void);
 
+void irq_enable(int irq_num);
+void irq_disable(int irq_num);
+void irq_disable_global(void);
+void irq_enable_global(void);
+
 #endif
