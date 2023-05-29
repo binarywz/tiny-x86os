@@ -16,7 +16,7 @@
 #define PIT_LOAD_LOHI               (3 << 4)
 #define PIT_MODE3                   (3 << 1)
 
-void time_init(void);
+void timer_init(void);
 void exception_handler_timer(void);
 
 #endif //OS_TIMER_H

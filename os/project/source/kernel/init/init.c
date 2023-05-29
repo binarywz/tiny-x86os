@@ -6,6 +6,8 @@
 #include "cpu/cpu.h"
 #include "cpu/irq.h"
 #include "dev/timer.h"
+#include "tools/log.h"
+#include "os_cfg.h"
 
 /**
  * 内核入口
@@ -14,6 +16,8 @@
 void kernel_init(boot_info_t* boot_info) {
     // 初始化完成后重新加载GDT
     cpu_init();
+    // 初始化日志模块
+    log_init();
     // 初始化IDT
     irq_init();
     // 初始化定时器
@@ -22,6 +26,8 @@ void kernel_init(boot_info_t* boot_info) {
 
 
 void init_main(void) {
+    log_printf("Kernel is running...");
+    log_printf("Version: %s", OS_VERSION);
     // 调试使用
     // int a = 3 / 0;
     // irq_enable_global(); // 开启定时器中断
