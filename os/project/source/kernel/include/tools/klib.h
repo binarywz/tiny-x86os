@@ -2,6 +2,7 @@
 #define KLIB_H
 
 #include "common/types.h"
+#include <stdarg.h> // 处理可变参数C库
 
 void kernel_strcpy(char* dest, const char* src);
 void kernel_strncpy(char* dest, const char* src, int size);
@@ -10,5 +11,6 @@ int kernel_strlen(const char* str);
 void kernel_memcpy(void* dest, void* src, int size);
 void kernel_memset(void* dest, uint8_t v, int size);
 int kernel_memcmp(void* d1, void* d2, int size);
+void kernel_vsprintf(char* buffer, const char* fmt, va_list args);
 
 #endif //KLIB_H
