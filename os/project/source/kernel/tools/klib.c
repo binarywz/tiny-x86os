@@ -2,7 +2,8 @@
  * 一些字符串的处理函数
  */
 #include "tools/klib.h"
-
+#include "tools/log.h"
+#include "common/cpu_instr.h"
 
 void kernel_strcpy(char* dest, const char* src) {
     if (!dest || !src) {
@@ -211,5 +212,17 @@ void kernel_itoa(char* buf, int num, int base) {
         *start = *p;
         *p-- = ch;
         start++;
+    }
+}
+
+/**
+ * 断言失败处理函数
+ */ 
+void panic(const char* file, int line, const char* func, const char* cond) {
+    log_printf("assert failed! %s", cond);
+    log_printf("file: %s\nline %d\nfunc: %s\n", file, line, func);
+
+    for (;;) {
+        hlt();
     }
 }
