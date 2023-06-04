@@ -28,6 +28,7 @@ void kernel_init(boot_info_t* boot_info) {
 void init_main(void) {
     log_printf("Kernel is running...");
     log_printf("Version: %s", OS_VERSION);
+    log_printf("%d %d %x %c", -123, 123456, 0x12345, 'a');
     // 调试使用
     // int a = 3 / 0;
     // irq_enable_global(); // 开启定时器中断
