@@ -25,6 +25,12 @@ void kernel_init(boot_info_t* boot_info) {
     timer_init();
 }
 
+void init_task_entry(void) {
+    int count = 0;
+    for (;;) {
+        log_printf("init task: %d", count++);
+    }
+}
 
 void init_main(void) {
     log_printf("Kernel is running...");
@@ -32,12 +38,16 @@ void init_main(void) {
     log_printf("%d %d %x %c", -123, 123456, 0x12345, 'a');
 
     // 断言功能调试
-    int a = 3;
-    ASSERT(a > 2);
-    ASSERT(a < 2);
+    // int a = 3;
+    // ASSERT(a > 2);
+    // ASSERT(a < 2);
 
     // 调试使用
     // int a = 3 / 0;
     // irq_enable_global(); // 开启定时器中断
-    for (;;) {}
+
+    int count = 0;
+    for (;;) {
+        log_printf("init main: %d", count++);
+    }
 }
