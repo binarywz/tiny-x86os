@@ -26,6 +26,9 @@
 #define GATE_DPL0			(0 << 13)		// 特权级0，最高特权级
 #define GATE_DPL3			(3 << 13)		// 特权级3，最低权限
 
+#define EFLAGS_IF           (1 << 9)
+#define EFLAGS_DEFAULT      (1 << 1)
+
 #pragma pack(1)
 
 /**

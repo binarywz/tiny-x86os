@@ -9,6 +9,7 @@
 #include "tools/log.h"
 #include "os_cfg.h"
 #include "tools/klib.h"
+#include "core/task.h"
 
 /**
  * 内核入口
@@ -24,6 +25,10 @@ void kernel_init(boot_info_t* boot_info) {
     // 初始化定时器
     timer_init();
 }
+
+static task_t main_task;
+static task_t entry_task;
+static uint32_t entry_task_stack[1024];	// 空闲任务堆栈
 
 void init_task_entry(void) {
     int count = 0;
@@ -42,9 +47,16 @@ void init_main(void) {
     // ASSERT(a > 2);
     // ASSERT(a < 2);
 
-    // 调试使用
+    // 异常处理调试
     // int a = 3 / 0;
     // irq_enable_global(); // 开启定时器中断
+
+    /**
+     * 初始化任务
+     * x86的栈是从高地址往低地址，故栈顶指针设置为(uint32_t)&entry_task_stack[1024]
+     */ 
+    task_init(&entry_task, (uint32_t)init_task_entry, (uint32_t)&entry_task_stack[1024]);
+    task_init(&main_task, 0, 0);
 
     int count = 0;
     for (;;) {
