@@ -10,6 +10,7 @@
 #include "os_cfg.h"
 #include "tools/klib.h"
 #include "core/task.h"
+#include "common/cpu_instr.h"
 
 /**
  * 内核入口
@@ -34,6 +35,7 @@ void init_task_entry(void) {
     int count = 0;
     for (;;) {
         log_printf("init task: %d", count++);
+        task_switch_from_to(&entry_task, &main_task);
     }
 }
 
@@ -57,9 +59,11 @@ void init_main(void) {
      */ 
     task_init(&entry_task, (uint32_t)init_task_entry, (uint32_t)&entry_task_stack[1024]);
     task_init(&main_task, 0, 0);
+    write_tr(main_task.tss_sel);
 
     int count = 0;
     for (;;) {
         log_printf("init main: %d", count++);
+        task_switch_from_to(&main_task, &entry_task);
     }
 }
