@@ -144,7 +144,7 @@ simple_switch:
 	push %edi
 
 	# 切换栈
-	mov %esp, (%eax)    # from->stack = esp
+	mov %esp, (%eax)    # from->stack = esp,将值从%esp复制到内存中%eax指向的位置
   	mov %edx, %esp      # esp = to->stack
 
 	# 加载下一任务的栈

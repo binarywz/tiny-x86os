@@ -24,6 +24,10 @@ typedef struct _task_t {
 int task_init(task_t* task, uint32_t entry, uint32_t esp);
 void task_switch_from_to(task_t* from, task_t* to);
 
+/**
+ * from -> from栈的地址
+ * to   -> to栈的栈顶指针
+ */ 
 void simple_switch(uint32_t** from, uint32_t* to);
 
 #endif

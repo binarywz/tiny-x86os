@@ -56,7 +56,7 @@ int task_init(task_t* task, uint32_t entry, uint32_t esp) {
 /**
  * @brief 切换至指定任务
  */
-void task_switch_from_to (task_t* from, task_t* to) {
+void task_switch_from_to(task_t* from, task_t* to) {
     // switch_to_tss(to->tss_sel);
     simple_switch(&from->stack, to->stack);
 }
