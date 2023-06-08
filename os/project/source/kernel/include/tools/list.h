@@ -50,4 +50,40 @@ typedef struct _list_t {
 
 void list_init(list_t* list);
 
+/**
+ * 判断链表是否为空
+ * @param list 判断的链表
+ * @return 1 - 空，0 - 非空
+ */
+static inline int list_is_empty(list_t* list) {
+    return list->count == 0;
+}
+
+/**
+ * 获取链表的结点数量
+ * @param list 查询的链表
+ * @return 结果的数据
+ */
+static inline int list_count(list_t* list) {
+    return list->count;
+}
+
+/**
+ * 获取指定链表的第一个表项
+ * @param list 查询的链表
+ * @return 第一个表项
+ */
+static inline list_node_t* list_first(list_t* list) {
+    return list->first;
+}
+
+/**
+ * 获取指定链接的最后一个表项
+ * @param list 查询的链表
+ * @return 最后一个表项
+ */
+static inline list_node_t* list_last(list_t* list) {
+    return list->last;
+}
+
 #endif /* LIST_H */
