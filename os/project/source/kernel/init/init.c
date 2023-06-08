@@ -11,6 +11,7 @@
 #include "tools/klib.h"
 #include "core/task.h"
 #include "common/cpu_instr.h"
+#include "tools/list.h"
 
 /**
  * 内核入口
@@ -39,7 +40,19 @@ void init_task_entry(void) {
     }
 }
 
+/**
+ * 链表测试代码
+ */ 
+void list_validate(void) {
+    list_t list;
+    
+    list_init(&list);
+}
+
 void init_main(void) {
+    // 链表功能验证
+    list_validate();
+
     log_printf("Kernel is running...");
     log_printf("Version: %s", OS_VERSION);
     log_printf("%d %d %x %c", -123, 123456, 0x12345, 'a');

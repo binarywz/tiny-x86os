@@ -39,16 +39,17 @@ static int tss_init(task_t* task, uint32_t entry, uint32_t esp) {
 int task_init(task_t* task, uint32_t entry, uint32_t esp) {
     ASSERT(task != (task_t*)0);
 
-    uint32_t* pesp = (uint32_t*)esp;
-    if (pesp) {
-        *(--pesp) = entry;
-        *(--pesp) = 0;
-        *(--pesp) = 0;
-        *(--pesp) = 0;
-        *(--pesp) = 0;
-        task->stack = pesp;
-    }
+    // uint32_t* pesp = (uint32_t*)esp;
+    // if (pesp) {
+    //     *(--pesp) = entry;
+    //     *(--pesp) = 0;
+    //     *(--pesp) = 0;
+    //     *(--pesp) = 0;
+    //     *(--pesp) = 0;
+    //     task->stack = pesp;
+    // }
 
+    // 使用栈的方式切换进程时将tss初始化进行注释
     tss_init(task, entry, esp);
     return 0;
 }
@@ -57,6 +58,7 @@ int task_init(task_t* task, uint32_t entry, uint32_t esp) {
  * @brief 切换至指定任务
  */
 void task_switch_from_to(task_t* from, task_t* to) {
-    // switch_to_tss(to->tss_sel);
-    simple_switch(&from->stack, to->stack);
+    switch_to_tss(to->tss_sel);
+    // 后续代码不使用栈进行切换任务
+    // simple_switch(&from->stack, to->stack);
 }
