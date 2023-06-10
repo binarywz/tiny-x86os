@@ -86,9 +86,14 @@ static inline list_node_t* list_last(list_t* list) {
     return list->last;
 }
 
-// 链表头部插入结点
+// 从链表头部插入结点
 void list_insert_first(list_t *list, list_node_t *node);
-// 链表尾部插入结点
+// 从链表尾部插入结点
 void list_insert_last(list_t *list, list_node_t *node);
+
+// 从链表头部删除结点
+list_node_t* list_remove_first(list_t* list);
+// 删除头部任意结点
+list_node_t* list_remove(list_t* list, list_node_t* node);
 
 #endif /* LIST_H */
