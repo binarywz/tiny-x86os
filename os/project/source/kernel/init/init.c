@@ -28,7 +28,6 @@ void kernel_init(boot_info_t* boot_info) {
     timer_init();
 }
 
-static task_t main_task;
 static task_t entry_task;
 static uint32_t entry_task_stack[1024];	// 空闲任务堆栈
 
@@ -36,7 +35,7 @@ void init_task_entry(void) {
     int count = 0;
     for (;;) {
         log_printf("init task: %d", count++);
-        task_switch_from_to(&entry_task, &main_task);
+        task_switch_from_to(&entry_task, task_main_task());
     }
 }
 
@@ -44,50 +43,6 @@ void init_task_entry(void) {
  * 链表功能验证代码
  */ 
 void list_validate(void) {
-    list_t list;
-    list_node_t nodes[5];
-    
-    list_init(&list);
-    log_printf("list: first=0x%x, last=0x%x, count=%d", list_first(&list), list_last(&list), list_count(&list));
-
-    // 插入
-    for (int i = 0; i < 5; i++) {
-        list_node_t* node = nodes + i;
-        log_printf("insert first to list: %d, 0x%x", i, (uint32_t)node);
-        list_insert_first(&list, node);
-    }
-    log_printf("list: first=0x%x, last=0x%x, count=%d", list_first(&list), list_last(&list), list_count(&list));
-
-    list_init(&list);
-    for (int i = 0; i < 5; i++) {
-        list_node_t* node = nodes + i;
-        log_printf("insert last to list: %d, 0x%x", i, (uint32_t)node);
-        list_insert_last(&list, node);
-    }
-    log_printf("list: first=0x%x, last=0x%x, count=%d", list_first(&list), list_last(&list), list_count(&list));
-
-    for (int i = 0; i < 5; i++) {
-        list_node_t * node = list_remove_first(&list);
-        log_printf("remove first from list: %d, 0x%x", i, (uint32_t)node);
-    }
-    log_printf("list: first=0x%x, last=0x%x, count=%d", list_first(&list), list_last(&list), list_count(&list));
-
-
-    // 插入
-    for (int i = 0; i < 5; i++) {
-        list_node_t * node = nodes + i;
-        log_printf("insert last to list: %d, 0x%x", i, (uint32_t)node);
-        list_insert_last(&list, node);
-    }
-    log_printf("list: first=0x%x, last=0x%x, count=%d", list_first(&list), list_last(&list), list_count(&list));
-
-    for (int i = 0; i < 5; i++) {
-        list_node_t * node = nodes + i;
-        log_printf("remove first from list: %d, 0x%x", i, (uint32_t)node);
-        list_remove(&list, node);
-    }
-    log_printf("list: first=0x%x, last=0x%x, count=%d", list_first(&list), list_last(&list), list_count(&list));
-
     struct type_t {
         int i;
         list_node_t node;
@@ -102,7 +57,7 @@ void list_validate(void) {
 
 void init_main(void) {
     // 链表功能验证
-    list_validate();
+    // list_validate();
 
     log_printf("Kernel is running...");
     log_printf("Version: %s", OS_VERSION);
@@ -122,12 +77,11 @@ void init_main(void) {
      * x86的栈是从高地址往低地址，故栈顶指针设置为(uint32_t)&entry_task_stack[1024]
      */ 
     task_init(&entry_task, (uint32_t)init_task_entry, (uint32_t)&entry_task_stack[1024]);
-    task_init(&main_task, 0, 0);
-    write_tr(main_task.tss_sel);
+    task_main_init();
 
     int count = 0;
     for (;;) {
         log_printf("init main: %d", count++);
-        task_switch_from_to(&main_task, &entry_task);
+        task_switch_from_to(task_main_task(), &entry_task);
     }
 }

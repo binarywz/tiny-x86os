@@ -7,6 +7,8 @@
 #include "os_cfg.h"
 #include "tools/log.h"
 
+static task_manager_t task_manager; // 任务管理器
+
 static int tss_init(task_t* task, uint32_t entry, uint32_t esp) {
     // 为TSS分配GDT
     int tss_sel = gdt_alloc_desc();
@@ -61,4 +63,30 @@ void task_switch_from_to(task_t* from, task_t* to) {
     switch_to_tss(to->tss_sel);
     // 后续代码不使用栈进行切换任务
     // simple_switch(&from->stack, to->stack);
+}
+
+void task_main_init(void) {
+    task_init(&task_manager.main_task, 0, 0);
+
+    // 写TR寄存器，指示当前运行的第一个任务
+    write_tr(task_manager.main_task.tss_sel);
+    task_manager.curr_task = &task_manager.main_task;
+}
+
+/**
+ * @brief 返回初始任务
+ */
+task_t* task_main_task(void) {
+    return &task_manager.main_task;
+}
+
+/**
+ * @brief 任务管理器初始化
+ */
+void task_manager_init (void) {
+    // 各队列初始化
+    list_init(&task_manager.ready_list);
+    list_init(&task_manager.task_list);
+
+    task_manager.curr_task = (task_t*)0;
 }

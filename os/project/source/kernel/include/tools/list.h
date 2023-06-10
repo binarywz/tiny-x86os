@@ -14,7 +14,7 @@
  * struct aa a;
  * 1.求结点在所在结构中的偏移:定义一个指向0的指针，用(struct aa *)&0->node，所得即为node字段在整个结构体的偏移
  */ 
-#define offset_in_parent(type, field)   \ 
+#define offset_in_parent(type, field)   \
     ((uint32_t)&(((type*)0)->field))
 
 /**
