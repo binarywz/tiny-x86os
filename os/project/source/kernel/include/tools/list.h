@@ -5,6 +5,33 @@
 #define LIST_H
 
 /**
+ * 已知结构体中的某个字段的指针,求所在结构体的指针,例如：
+ * struct aa {
+ *     ...
+ *     int node;
+ *     ...
+ * }; 
+ * struct aa a;
+ * 1.求结点在所在结构中的偏移:定义一个指向0的指针，用(struct aa *)&0->node，所得即为node字段在整个结构体的偏移
+ */ 
+#define offset_in_parent(type, field)   \ 
+    ((uint32_t)&(((type*)0)->field))
+
+/**
+ * 2.求node所在的结构体首址：node的地址 - node的偏移
+ * 即已知a->node的地址，求a的地址
+ */ 
+#define offset_to_parent(node, type, field)   \
+    ((uint32_t)node - offset_in_parent(type, field))
+
+/**
+ * 3. 进行转换: (struct aa *)addr
+ * list_node_parent(node_addr, struct aa, node_name)
+ */ 
+#define list_node_parent(node, type, field)   \
+        ((type*)(node ? offset_to_parent((node), type, field) : 0))
+
+/**
  * 链表结点类型
  */
 typedef struct _list_node_t {
