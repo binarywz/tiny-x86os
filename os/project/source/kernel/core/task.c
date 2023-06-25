@@ -81,6 +81,57 @@ void task_set_block(task_t* task) {
     list_remove(&task_manager.ready_list, &task->run_node);
 }
 
+/**
+ * @brief 当前任务主动放弃CPU
+ */
+int sys_yield(void) {
+    if (list_count(&task_manager.ready_list) > 1) {
+        task_t* curr_task = task_current();
+
+        // 如果队列中还有其它任务，则将当前任务移入到队列尾部
+        task_set_block(curr_task);
+        task_set_ready(curr_task);
+
+        /**
+         * 切换至下一个任务，在切换完成前要保护，不然可能下一任务
+         * 由于某些原因运行后阻塞或删除，再回到这里切换将发生问题
+         */ 
+        task_dispatch();
+    }
+
+    return 0;
+}
+
+/**
+ * @brief 进行一次任务调度
+ */
+void task_dispatch(void) {
+    task_t* to = task_next_run();
+    if (to != task_manager.curr_task) {
+        task_t* from = task_manager.curr_task;
+        task_manager.curr_task = to;
+
+        to->state = TASK_RUNNING;
+        task_switch_from_to(from, to);
+    }
+}
+
+/**
+ * @brief 获取下一将要运行的任务
+ */
+task_t* task_next_run(void) {
+    // 普通任务
+    list_node_t* task_node = list_first(&task_manager.ready_list);
+    return list_node_parent(task_node, task_t, run_node);
+}
+
+/**
+ * @brief 获取当前正在运行的任务
+ */
+task_t* task_current(void) {
+    return task_manager.curr_task;
+}
+
 void task_main_init(void) {
     task_init(&task_manager.main_task, "main task", 0, 0);
 

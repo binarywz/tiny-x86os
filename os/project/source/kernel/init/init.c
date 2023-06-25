@@ -35,7 +35,7 @@ void init_task_entry(void) {
     int count = 0;
     for (;;) {
         log_printf("init task: %d", count++);
-        task_switch_from_to(&entry_task, task_main_task());
+        sys_yield();
     }
 }
 
@@ -83,6 +83,6 @@ void init_main(void) {
     int count = 0;
     for (;;) {
         log_printf("init main: %d", count++);
-        task_switch_from_to(task_main_task(), &entry_task);
+        sys_yield();
     }
 }
