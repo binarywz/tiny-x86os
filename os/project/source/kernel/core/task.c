@@ -38,21 +38,22 @@ static int tss_init(task_t* task, uint32_t entry, uint32_t esp) {
 /**
  * @brief 初始化任务
  */
-int task_init(task_t* task, uint32_t entry, uint32_t esp) {
+int task_init(task_t* task, const char* name, uint32_t entry, uint32_t esp) {
     ASSERT(task != (task_t*)0);
-
-    // uint32_t* pesp = (uint32_t*)esp;
-    // if (pesp) {
-    //     *(--pesp) = entry;
-    //     *(--pesp) = 0;
-    //     *(--pesp) = 0;
-    //     *(--pesp) = 0;
-    //     *(--pesp) = 0;
-    //     task->stack = pesp;
-    // }
 
     // 使用栈的方式切换进程时将tss初始化进行注释
     tss_init(task, entry, esp);
+
+    // 任务字段初始化
+    kernel_strncpy(task->name, name, TASK_NAME_SIZE);
+    task->state = TASK_CREATED;
+    list_node_init(&task->all_node);
+    list_node_init(&task->run_node);
+
+    // 插入就绪队列中和所有的任务队列中
+    task_set_ready(task);
+    list_insert_last(&task_manager.task_list, &task->all_node);
+
     return 0;
 }
 
@@ -65,8 +66,23 @@ void task_switch_from_to(task_t* from, task_t* to) {
     // simple_switch(&from->stack, to->stack);
 }
 
+/**
+ * @brief 将任务插入就绪队列
+ */
+void task_set_ready(task_t* task) {
+    list_insert_last(&task_manager.ready_list, &task->run_node);
+    task->state = TASK_READY;
+}
+
+/**
+ * @brief 将任务从就绪队列移除
+ */
+void task_set_block(task_t* task) {
+    list_remove(&task_manager.ready_list, &task->run_node);
+}
+
 void task_main_init(void) {
-    task_init(&task_manager.main_task, 0, 0);
+    task_init(&task_manager.main_task, "main task", 0, 0);
 
     // 写TR寄存器，指示当前运行的第一个任务
     write_tr(task_manager.main_task.tss_sel);

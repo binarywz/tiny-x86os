@@ -76,7 +76,8 @@ void init_main(void) {
      * 初始化任务
      * x86的栈是从高地址往低地址，故栈顶指针设置为(uint32_t)&entry_task_stack[1024]
      */ 
-    task_init(&entry_task, (uint32_t)init_task_entry, (uint32_t)&entry_task_stack[1024]);
+    task_init(&entry_task, "entry task", (uint32_t)init_task_entry, (uint32_t)&entry_task_stack[1024]);
+    // 初始化内核任务
     task_main_init();
 
     int count = 0;
