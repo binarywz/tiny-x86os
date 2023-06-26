@@ -47,6 +47,8 @@ int task_init(task_t* task, const char* name, uint32_t entry, uint32_t esp) {
     // 任务字段初始化
     kernel_strncpy(task->name, name, TASK_NAME_SIZE);
     task->state = TASK_CREATED;
+    task->time_slice = TASK_TIME_SLICE_DEFAULT;
+    task->slice_ticks = task->time_slice;
     list_node_init(&task->all_node);
     list_node_init(&task->run_node);
 
@@ -79,6 +81,15 @@ void task_set_ready(task_t* task) {
  */
 void task_set_block(task_t* task) {
     list_remove(&task_manager.ready_list, &task->run_node);
+}
+
+/**
+ * @brief 获取下一将要运行的任务
+ */
+static task_t* task_next_run(void) {
+    // 普通任务
+    list_node_t* task_node = list_first(&task_manager.ready_list);
+    return list_node_parent(task_node, task_t, run_node);
 }
 
 /**
@@ -117,19 +128,31 @@ void task_dispatch(void) {
 }
 
 /**
- * @brief 获取下一将要运行的任务
- */
-task_t* task_next_run(void) {
-    // 普通任务
-    list_node_t* task_node = list_first(&task_manager.ready_list);
-    return list_node_parent(task_node, task_t, run_node);
-}
-
-/**
  * @brief 获取当前正在运行的任务
  */
 task_t* task_current(void) {
     return task_manager.curr_task;
+}
+
+/**
+ * @brief 时间处理
+ * 该函数在中断处理函数中调用
+ */
+void task_time_tick(void) {
+    task_t* curr_task = task_current();
+
+    // 时间片的处理
+    if (--curr_task->slice_ticks == 0) {
+        // 时间片用完，重新加载时间片
+        // 对于空闲任务，此处减未用
+        curr_task->slice_ticks = curr_task->time_slice;
+
+        // 调整队列的位置到尾部，不用直接操作队列
+        task_set_block(curr_task);
+        task_set_ready(curr_task);
+
+        task_dispatch();
+    }
 }
 
 void task_main_init(void) {

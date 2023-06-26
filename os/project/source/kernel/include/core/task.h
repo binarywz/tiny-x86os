@@ -9,6 +9,7 @@
 #include "tools/list.h"
 
 #define TASK_NAME_SIZE				32			// 任务名字长度
+#define TASK_TIME_SLICE_DEFAULT		10			// 时间片计数
 
 /**
  * @brief 任务控制块结构
@@ -23,6 +24,9 @@ typedef struct _task_t {
 	} state;
 
     char name[TASK_NAME_SIZE];  // 任务名字
+
+	int time_slice;				// 时间片
+	int slice_ticks;			// 递减时间片计数
 
 	tss_t tss;			    	// 任务的TSS段
     uint16_t tss_sel;		    // tss选择子
@@ -42,8 +46,9 @@ void task_set_ready(task_t* task);
 void task_set_block(task_t* task);
 int sys_yield(void);
 void task_dispatch(void);
-task_t* task_next_run(void);
+// task_t* task_next_run(void);
 task_t* task_current(void);
+void task_time_tick(void);			// 定时器中断处理函数
 
 /**
  * from -> from栈的地址

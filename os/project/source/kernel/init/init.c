@@ -34,8 +34,8 @@ static uint32_t entry_task_stack[1024];	// 空闲任务堆栈
 void init_task_entry(void) {
     int count = 0;
     for (;;) {
-        log_printf("init task: %d", count++);
-        sys_yield();
+        log_printf("init entry task: %d", count++);
+        // sys_yield();
     }
 }
 
@@ -63,15 +63,6 @@ void init_main(void) {
     log_printf("Version: %s", OS_VERSION);
     log_printf("%d %d %x %c", -123, 123456, 0x12345, 'a');
 
-    // 断言功能调试
-    // int a = 3;
-    // ASSERT(a > 2);
-    // ASSERT(a < 2);
-
-    // 异常处理调试
-    // int a = 3 / 0;
-    // irq_enable_global(); // 开启定时器中断
-
     /**
      * 初始化任务
      * x86的栈是从高地址往低地址，故栈顶指针设置为(uint32_t)&entry_task_stack[1024]
@@ -80,9 +71,10 @@ void init_main(void) {
     // 初始化内核任务
     task_main_init();
 
+    irq_enable_global(); // 开启中断
     int count = 0;
     for (;;) {
-        log_printf("init main: %d", count++);
-        sys_yield();
+        log_printf("init main task: %d", count++);
+        // sys_yield();
     }
 }
