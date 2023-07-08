@@ -249,3 +249,19 @@ void irq_disable_global(void) {
 void irq_enable_global(void) {
     sti();
 }
+
+/**
+ * @brief 进入临界区保护
+ */
+irq_state_t irq_enter_protection(void) {
+    irq_state_t state = read_eflags();
+    irq_disable_global();
+    return state;
+}
+
+/**
+ * @brief 退出临界区保护
+ */
+void irq_leave_protection(irq_state_t state) {
+    write_eflags(state);
+}

@@ -6,6 +6,7 @@
 #include "tools/klib.h"
 #include "os_cfg.h"
 #include "common/cpu_instr.h"
+#include "cpu/irq.h"
 
 // 目标用串口，参考资料：https://wiki.osdev.org/Serial_Ports
 #define COM1_PORT           0x3F8       // RS232端口0初始化
@@ -39,6 +40,7 @@ void log_printf(const char* fmt, ...) {
     kernel_vsprintf(str_buf, fmt, args);
     va_end(args);
 
+    irq_state_t state = irq_enter_protection();
     const char* p = str_buf;
     while (*p != '\0') {
         while ((inb(COM1_PORT + 5) & (1 << 6)) == 0);
@@ -47,4 +49,6 @@ void log_printf(const char* fmt, ...) {
 
     outb(COM1_PORT, '\r');
     outb(COM1_PORT, '\n');
+
+    irq_leave_protection(state);
 }

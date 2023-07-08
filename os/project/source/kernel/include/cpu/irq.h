@@ -4,6 +4,8 @@
 #ifndef IRQ_H
 #define IRQ_H
 
+#include "common/types.h"
+
 // 中断号码
 #define IRQ0_DE             0   // Divide Error
 #define IRQ1_DB             1   // Debug Exception
@@ -94,5 +96,9 @@ void irq_disable_global(void);
 void irq_enable_global(void);
 
 void pic_send_eoi(int irq);
+
+typedef uint32_t irq_state_t;
+irq_state_t irq_enter_protection(void);
+void irq_leave_protection(irq_state_t state);
 
 #endif

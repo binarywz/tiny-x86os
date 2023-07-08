@@ -6,6 +6,7 @@
 #include "tools/klib.h"
 #include "os_cfg.h"
 #include "tools/log.h"
+#include "cpu/irq.h"
 
 static task_manager_t task_manager; // 任务管理器
 
@@ -52,9 +53,11 @@ int task_init(task_t* task, const char* name, uint32_t entry, uint32_t esp) {
     list_node_init(&task->all_node);
     list_node_init(&task->run_node);
 
+    irq_state_t state = irq_enter_protection();
     // 插入就绪队列中和所有的任务队列中
     task_set_ready(task);
     list_insert_last(&task_manager.task_list, &task->all_node);
+    irq_leave_protection(state);
 
     return 0;
 }
@@ -96,6 +99,7 @@ static task_t* task_next_run(void) {
  * @brief 当前任务主动放弃CPU
  */
 int sys_yield(void) {
+    irq_state_t state = irq_enter_protection();
     if (list_count(&task_manager.ready_list) > 1) {
         task_t* curr_task = task_current();
 
@@ -109,7 +113,7 @@ int sys_yield(void) {
          */ 
         task_dispatch();
     }
-
+    irq_leave_protection(state);
     return 0;
 }
 
@@ -117,6 +121,7 @@ int sys_yield(void) {
  * @brief 进行一次任务调度
  */
 void task_dispatch(void) {
+    irq_state_t state = irq_enter_protection();
     task_t* to = task_next_run();
     if (to != task_manager.curr_task) {
         task_t* from = task_manager.curr_task;
@@ -125,6 +130,7 @@ void task_dispatch(void) {
         to->state = TASK_RUNNING;
         task_switch_from_to(from, to);
     }
+    irq_leave_protection(state);
 }
 
 /**
