@@ -34,7 +34,7 @@ static uint32_t entry_task_stack[1024];	// 空闲任务堆栈
 void init_task_entry(void) {
     int count = 0;
     for (;;) {
-        log_printf("init entry task: %d", count++);
+        // log_printf("init entry task: %d", count++);
         // sys_yield();
     }
 }
@@ -76,5 +76,6 @@ void init_main(void) {
     for (;;) {
         log_printf("init main task: %d", count++);
         // sys_yield();
+        sys_msleep(1000);
     }
 }

@@ -25,6 +25,7 @@ typedef struct _task_t {
 
     char name[TASK_NAME_SIZE];  // 任务名字
 
+	int sleep_ticks;			// 延迟时间
 	int time_slice;				// 时间片
 	int slice_ticks;			// 递减时间片计数
 
@@ -50,6 +51,10 @@ void task_dispatch(void);
 task_t* task_current(void);
 void task_time_tick(void);			// 定时器中断处理函数
 
+void task_set_sleep(task_t *task, uint32_t ticks);
+void task_set_wakeup(task_t *task);
+void sys_msleep(uint32_t ms);
+
 /**
  * from -> from栈的地址
  * to   -> to栈的栈顶指针
@@ -61,6 +66,7 @@ typedef struct _task_manager_t {
 
 	list_t ready_list;  // 就绪队列
 	list_t task_list;	// 所有已创建任务的队列
+	list_t sleep_list;  // 延时队列
 
 	task_t main_task;	// 内核任务
 } task_manager_t;
